@@ -1,9 +1,32 @@
-#[derive(Debug)]
+// ILLEGAL = "ILLEGAL"
+// EOF     = "EOF"
+
+// // Identifiers + literals
+// IDENT = "IDENT" // add, foobar, x, y, ...
+// INT   = "INT"   // 1343456
+
+// // Operators
+// ASSIGN   = "="
+// PLUS     = "+"
+
+// // Delimiters
+// COMMA     = ","
+// SEMICOLON = ";"
+
+// LPAREN = "("
+// RPAREN = ")"
+// LBRACE = "{"
+// RBRACE = "}"
+
+// // Keywords
+// FUNCTION = "FUNCTION"
+// LET      = "LET"
+#[derive(Debug, Eq, PartialEq)]
 pub enum Token {
     ILLEGAL(char), 
     EOF(char),
     // Identifiers + literals
-    IDENT(char), 
+    IDENT(Vec<char>), 
     INT(char),   
 
     // Operators
@@ -21,7 +44,6 @@ pub enum Token {
 
     // Keywords
     FUNCTION(char),
-    LET(char),
-    IDENTIFIER(Vec<char>)
+    LET(String),
 }
 

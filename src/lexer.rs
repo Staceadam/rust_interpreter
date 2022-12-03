@@ -19,7 +19,7 @@ impl Lexer {
         }
     }             // Create a new Lexer instance
 
-    pub fn read_char(mut self) {
+    pub fn read_char(&mut self) {
         if self.read_position >= self.input.len() {
             self.ch = '\0'
         } else {
@@ -28,10 +28,27 @@ impl Lexer {
         self.position = self.read_position;
         self.read_position += 1;
     }   // Read next char, update positions
-    
-    pub fn next_token(self) -> Token {
+
+    fn read_identifier(&mut self) -> Token {
+        let mut ident = Vec::new();
+        loop {
+            if self.ch.is_alphabetic() {
+                // push to vector
+                ident.push(self.ch);
+                self.read_char();
+            } else {
+                break;
+            }
+        }
+        return Token::IDENT(ident)
+    }
+
+    pub fn next_token(&mut self) -> Token {
         let tok;
         match self.ch {
+            // "let" => {
+            //     tok = Token::LET(self.ch);
+            // },
             ',' => {
                 tok = Token::COMMA(self.ch);
             },
@@ -59,10 +76,17 @@ impl Lexer {
             '-' => {
                 tok = Token::MINUS(self.ch);
             },
-            ' ' => {
+            '\0' => {
                 tok = Token::EOF(self.ch)
             },
-            _ => panic!()
+            _ => {
+                if self.ch.is_alphabetic() {
+                    tok = self.read_identifier();
+                } else {
+                    // this needs to ignore and skip spaces
+                    tok = Token::ILLEGAL(self.ch)
+                }
+            }
             // Other patterns
         }
         self.read_char();
