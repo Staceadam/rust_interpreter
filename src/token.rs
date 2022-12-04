@@ -24,15 +24,21 @@
 #[derive(Debug, Eq, PartialEq)]
 pub enum Token {
     ILLEGAL(char), 
+    SPACE(char), 
     EOF(char),
     // Identifiers + literals
-    IDENT(Vec<char>), 
-    INT(char),   
+    IDENT(String), 
+    INT(String),   
 
     // Operators
     ASSIGN(char), 
     PLUS(char),
     MINUS(char),
+    BANG(char),
+    ASTERISK(char),
+    SLASH(char),
+    LT(char),
+    GT(char),
 
 
     COMMA(char),
@@ -41,9 +47,16 @@ pub enum Token {
     RPAREN(char),
     LBRACE(char),
     RBRACE(char),
+    EQ(String),
+    NOT_EQ(String),
 
     // Keywords
-    FUNCTION(char),
+    FUNCTION(String),
     LET(String),
+    TRUE(String),
+    FALSE(String),
+    IF(String),
+    ELSE(String),
+    RETURN(String)
 }
 
