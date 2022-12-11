@@ -21,7 +21,7 @@
 // // Keywords
 // FUNCTION = "FUNCTION"
 // LET      = "LET"
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub enum Token {
     ILLEGAL(char), 
     SPACE(char), 

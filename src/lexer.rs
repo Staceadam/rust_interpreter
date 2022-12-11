@@ -2,6 +2,7 @@ use crate::token::{Token};
 
 //https://mohitkarekar.com/posts/pl/lexer/
 
+#[derive(Clone)]
 pub struct Lexer {
     input: Vec<char>,           // Source code
     pub position: usize,        // Reading position
