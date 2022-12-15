@@ -3,14 +3,16 @@ use super::TokenType;
 #[derive(Clone, Debug)]
 pub struct Token {
     pub(crate) token_type: TokenType,
-    pub(crate) literal: String,
+    pub(crate) data: String,
+    pub(crate) index: usize,
 }
 
 impl Token {
-    pub(crate) fn new(token_type: TokenType, literal: String) -> Self {
+    pub(crate) fn new(token_type: TokenType, data: String) -> Self {
         Self {
             token_type,
-            literal,
+            data,
+            index: 0
         }
     }
 
@@ -20,7 +22,7 @@ impl Token {
     }
 
     /// Get a reference to the token's data.
-    pub fn literal(&self) -> &str {
-        self.literal.as_str()
+    pub fn data(&self) -> &str {
+        self.data.as_str()
     }
 }

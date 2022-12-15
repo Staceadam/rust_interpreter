@@ -3,9 +3,18 @@ pub enum TokenType {
     ILLEGAL,
     EOF,
     IDENT,
+    FLOAT,
     INT,
+
     ASSIGN,
     PLUS,
+    MINUS,
+    BANG,
+    ASTERISK,
+    SLASH,
+    LT,
+    GT,
+
     COMMA,
     SEMICOLON,
     LPAREN,
@@ -13,5 +22,11 @@ pub enum TokenType {
     LBRACE,
     RBRACE,
     FUNCTION,
-    LET
+    LET,
+    TRUE,
+    FALSE,
+    IF,
+    ELSE,
+    RETURN,
+    WHITESPACE,
 }
