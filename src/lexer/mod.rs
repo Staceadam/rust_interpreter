@@ -50,7 +50,10 @@ impl<'a> Iterator for Lexer<'a> {
             return None
         }
         if self.input.is_empty() {
-            let eof = Token::new(TokenType::EOF, String::from("EOF"));
+            let mut eof = Token::new(TokenType::EOF, String::from("EOF"));
+            // after you instantiate a new token we explicitly set the index based on the index that the entire Lexer is keeping
+            eof.index = self.index;
+
             self.finished = true;
             return Some(Ok(eof));
         }
@@ -63,6 +66,7 @@ impl<'a> Iterator for Lexer<'a> {
         match r {
             // if we get an Ok from the advance then update the lexers index and return some to the iterator
             Ok(mut token) => {
+                // after you instantiate a new token we explicitly set the index based on the index that the entire Lexer is keeping
                 token.index = self.index;
                 self.index += token.data.len();
 
@@ -204,6 +208,7 @@ impl<'a> Cursor<'a> {
 
         while !self.is_eof() {
             let first = self.first();
+            // check to see if the current char is not one of the predefined chars
             if is_ident_char(first) || is_digit_char(first) {
                 buf.push(first);
                 // self.bump();
@@ -212,7 +217,9 @@ impl<'a> Cursor<'a> {
             }
         }
 
+        // check the entire string that was put together and see if its and ident or a predefined keyword
         match buf.as_str() {
+            //TODO: check to see if theres a better way to define these as a keywords list or struct
             "let" => {              
                  Ok(Token::new(TokenType::LET, buf)) 
             }
@@ -234,9 +241,6 @@ impl<'a> Cursor<'a> {
             "return" => {              
                  Ok(Token::new(TokenType::RETURN, buf)) 
             }
-            "let" => {              
-                 Ok(Token::new(TokenType::LET, buf)) 
-            }
             _ => Ok(Token::new(TokenType::IDENT, buf)) 
 
         }
@@ -245,7 +249,6 @@ impl<'a> Cursor<'a> {
     fn number(&mut self, first_digit: char) -> Result<Token, Error> {
         let mut buf = String::new();
         
-        println!("{:?}", buf);
         buf.push(first_digit);
 
         let mut has_fractional = false;
@@ -254,7 +257,6 @@ impl<'a> Cursor<'a> {
         while !self.is_eof() {
             let first = self.first();
 
-            println!("{:?}", first);
             match first {
                 '.' => {
                     buf.push(first);
@@ -312,7 +314,7 @@ mod test {
     #[test]
     fn white_space() {
         let input = String::from("=   +    (){},;");
-        let mut l = Lexer::new(&input);
+        let l = Lexer::new(&input);
         let tokens = l.lex();
         
         println!("{:?}", tokens);
@@ -323,30 +325,28 @@ mod test {
     #[test]
     fn number() {
         //TODO: needs to handle floats that start with .
-        let input = String::from("1256 34 53.3");
-        let mut l = Lexer::new(&input);
+        let input = r#"1256 34 53.3"#;
+        let l = Lexer::new(&input);
         let tokens = l.lex();
         
-        println!("{:?}", tokens);
-
+        dbg!(&tokens);
         assert_eq!(tokens.len(), 6);
     }
 
     #[test]
     fn ident() {
-        let input = String::from("ident let fn special");
-        let mut l = Lexer::new(&input);
+        let input = r#"ident let fn special"#;
+        let l = Lexer::new(&input);
         let tokens = l.lex();
         
-        println!("{:?}", tokens);
-
+        dbg!(&tokens);
         assert_eq!(tokens.len(), 8);
     }
 
-
     #[test]
     fn complex() {
-        let input = "let five = 5; 
+        let input = r#"
+        let five = 5; 
         let ten = 10;
         let add = fn(x, y) {
             x + y;
@@ -354,14 +354,12 @@ mod test {
 
         let result = add(five, ten);
         !-/*5;
-        5 < 10 > 5;";
+        5 < 10 > 5;"#;
 
-        let mut l = Lexer::new(&input);
+        let l = Lexer::new(&input);
         let tokens = l.lex();
-        
-        println!("{:?}", tokens);
 
-        // assert_eq!(tokens.len(), 8);
+        dbg!(&tokens, tokens.len());
+        assert_eq!(tokens.len(), 78);
     }
-
 }
