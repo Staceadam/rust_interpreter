@@ -219,6 +219,24 @@ impl<'a> Cursor<'a> {
             "fn" => {              
                  Ok(Token::new(TokenType::FUNCTION, buf)) 
             }
+            "true" => {              
+                 Ok(Token::new(TokenType::TRUE, buf)) 
+            }
+            "false" => {              
+                 Ok(Token::new(TokenType::FALSE, buf)) 
+            }
+            "if" => {              
+                 Ok(Token::new(TokenType::IF, buf)) 
+            }
+            "else" => {              
+                 Ok(Token::new(TokenType::ELSE, buf)) 
+            }
+            "return" => {              
+                 Ok(Token::new(TokenType::RETURN, buf)) 
+            }
+            "let" => {              
+                 Ok(Token::new(TokenType::LET, buf)) 
+            }
             _ => Ok(Token::new(TokenType::IDENT, buf)) 
 
         }
@@ -276,68 +294,74 @@ impl<'a> Cursor<'a> {
 
 }
 
-#[test]
-fn special_characters() {
-    let input = String::from("=+(){},;");
-    let mut l = Lexer::new(&input);
-    let tokens = l.lex();
-    
-    println!("{:?}", tokens);
+#[cfg(test)]
+mod test {
+    use super::*;
 
-    assert_eq!(tokens.len(), 9);
-}
+    #[test]
+    fn special_characters() {
+        let input = String::from("=+(){},;");
+        let mut l = Lexer::new(&input);
+        let tokens = l.lex();
+        
+        println!("{:?}", tokens);
 
-#[test]
-fn white_space() {
-    let input = String::from("=   +    (){},;");
-    let mut l = Lexer::new(&input);
-    let tokens = l.lex();
-    
-    println!("{:?}", tokens);
+        assert_eq!(tokens.len(), 9);
+    }
 
-    assert_eq!(tokens.len(), 11);
-}
+    #[test]
+    fn white_space() {
+        let input = String::from("=   +    (){},;");
+        let mut l = Lexer::new(&input);
+        let tokens = l.lex();
+        
+        println!("{:?}", tokens);
 
-#[test]
-fn number() {
-    //TODO: needs to handle floats that start with .
-    let input = String::from("1256 34 53.3");
-    let mut l = Lexer::new(&input);
-    let tokens = l.lex();
-    
-    println!("{:?}", tokens);
+        assert_eq!(tokens.len(), 11);
+    }
 
-    assert_eq!(tokens.len(), 6);
-}
+    #[test]
+    fn number() {
+        //TODO: needs to handle floats that start with .
+        let input = String::from("1256 34 53.3");
+        let mut l = Lexer::new(&input);
+        let tokens = l.lex();
+        
+        println!("{:?}", tokens);
 
-#[test]
-fn ident() {
-    let input = String::from("ident let fn special");
-    let mut l = Lexer::new(&input);
-    let tokens = l.lex();
-    
-    println!("{:?}", tokens);
+        assert_eq!(tokens.len(), 6);
+    }
 
-    assert_eq!(tokens.len(), 8);
-}
+    #[test]
+    fn ident() {
+        let input = String::from("ident let fn special");
+        let mut l = Lexer::new(&input);
+        let tokens = l.lex();
+        
+        println!("{:?}", tokens);
+
+        assert_eq!(tokens.len(), 8);
+    }
 
 
-#[test]
-fn complex() {
-    let input = "let five = 5; 
-    let ten = 10;
-    let add = fn(x, y) {
-        x + y;
-    };
+    #[test]
+    fn complex() {
+        let input = "let five = 5; 
+        let ten = 10;
+        let add = fn(x, y) {
+            x + y;
+        };
 
-    let result = add(five, ten);
-    !-/*5;
-    5 < 10 > 5;";
+        let result = add(five, ten);
+        !-/*5;
+        5 < 10 > 5;";
 
-    let mut l = Lexer::new(&input);
-    let tokens = l.lex();
-    
-    println!("{:?}", tokens);
+        let mut l = Lexer::new(&input);
+        let tokens = l.lex();
+        
+        println!("{:?}", tokens);
 
-    // assert_eq!(tokens.len(), 8);
+        // assert_eq!(tokens.len(), 8);
+    }
+
 }
