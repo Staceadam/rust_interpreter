@@ -1,17 +1,17 @@
 mod token;
 mod token_type;
 
-pub use token::Token;
-pub use token_type::TokenType;
 use crate::error::Error;
 use std::str::Chars;
+pub use token::Token;
+pub use token_type::TokenType;
 
 #[derive(Clone, Debug)]
 pub struct Lexer<'a> {
     // this needs a lifetime so that it can be applied to the inputs string type as a lifetime reference
-    input: &'a str,           // Source code
-    index: usize,        // Reading position
-    finished: bool,         // At the end of the input
+    input: &'a str, // Source code
+    index: usize,   // Reading position
+    finished: bool, // At the end of the input
 }
 
 pub(crate) const EOF_CHAR: char = '\0';
@@ -47,7 +47,7 @@ impl<'a> Iterator for Lexer<'a> {
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.finished {
-            return None
+            return None;
         }
         if self.input.is_empty() {
             let mut eof = Token::new(TokenType::EOF, String::from("EOF"));
@@ -220,35 +220,20 @@ impl<'a> Cursor<'a> {
         // check the entire string that was put together and see if its and ident or a predefined keyword
         match buf.as_str() {
             //TODO: check to see if theres a better way to define these as a keywords list or struct
-            "let" => {              
-                 Ok(Token::new(TokenType::LET, buf)) 
-            }
-            "fn" => {              
-                 Ok(Token::new(TokenType::FUNCTION, buf)) 
-            }
-            "true" => {              
-                 Ok(Token::new(TokenType::TRUE, buf)) 
-            }
-            "false" => {              
-                 Ok(Token::new(TokenType::FALSE, buf)) 
-            }
-            "if" => {              
-                 Ok(Token::new(TokenType::IF, buf)) 
-            }
-            "else" => {              
-                 Ok(Token::new(TokenType::ELSE, buf)) 
-            }
-            "return" => {              
-                 Ok(Token::new(TokenType::RETURN, buf)) 
-            }
-            _ => Ok(Token::new(TokenType::IDENT, buf)) 
-
+            "let" => Ok(Token::new(TokenType::LET, buf)),
+            "fn" => Ok(Token::new(TokenType::FUNCTION, buf)),
+            "true" => Ok(Token::new(TokenType::TRUE, buf)),
+            "false" => Ok(Token::new(TokenType::FALSE, buf)),
+            "if" => Ok(Token::new(TokenType::IF, buf)),
+            "else" => Ok(Token::new(TokenType::ELSE, buf)),
+            "return" => Ok(Token::new(TokenType::RETURN, buf)),
+            _ => Ok(Token::new(TokenType::IDENT, buf)),
         }
     }
 
     fn number(&mut self, first_digit: char) -> Result<Token, Error> {
         let mut buf = String::new();
-        
+
         buf.push(first_digit);
 
         let mut has_fractional = false;
@@ -283,7 +268,7 @@ impl<'a> Cursor<'a> {
                     // self.bump();
                     has_digit = true;
                 }
-                _ => break     
+                _ => break,
             }
         }
 
@@ -293,7 +278,6 @@ impl<'a> Cursor<'a> {
             Ok(Token::new(TokenType::INT, buf))
         }
     }
-
 }
 
 #[cfg(test)]
@@ -305,7 +289,7 @@ mod test {
         let input = String::from("=+(){},;");
         let mut l = Lexer::new(&input);
         let tokens = l.lex();
-        
+
         println!("{:?}", tokens);
 
         assert_eq!(tokens.len(), 9);
@@ -316,7 +300,7 @@ mod test {
         let input = String::from("=   +    (){},;");
         let l = Lexer::new(&input);
         let tokens = l.lex();
-        
+
         println!("{:?}", tokens);
 
         assert_eq!(tokens.len(), 11);
@@ -328,7 +312,7 @@ mod test {
         let input = r#"1256 34 53.3"#;
         let l = Lexer::new(&input);
         let tokens = l.lex();
-        
+
         dbg!(&tokens);
         assert_eq!(tokens.len(), 6);
     }
@@ -338,7 +322,7 @@ mod test {
         let input = r#"ident let fn special"#;
         let l = Lexer::new(&input);
         let tokens = l.lex();
-        
+
         dbg!(&tokens);
         assert_eq!(tokens.len(), 8);
     }

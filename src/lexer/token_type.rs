@@ -14,6 +14,8 @@ pub enum TokenType {
     SLASH,
     LT,
     GT,
+    EQ,
+    NOT_EQ,
 
     COMMA,
     SEMICOLON,
